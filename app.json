@@ -1,0 +1,15 @@
+{
+    "name": "ayumi-api",
+    "description": "Project for database class I, transportation service",
+    "repository": "https://github.com/galexbh/ayumi-api",
+    "keywords": [
+    "unah",
+    "mssql",
+    "typescript"
+    ],
+    "env": {
+        "DB_CONNECTION": {
+            "description": "Azure connection string"
+        }
+    }
+}
