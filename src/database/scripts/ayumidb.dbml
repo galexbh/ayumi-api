@@ -1,0 +1,431 @@
+Table "Modules" {
+  "ModuleID" INT [pk, increment]
+  "NameModules" VARCHAR(50) [not null]
+}
+
+Table "Operations" {
+  "OperationID" INT [pk, increment]
+  "NameOperations" VARCHAR(50) [not null]
+  "fk_Module" INT
+}
+
+Table "Roles" {
+  "RolID" INT [pk, increment]
+  "NameRoles" VARCHAR(50) [not null]
+}
+
+Table "RolesOperations" {
+  "RolOperationid" INT [pk, increment]
+  "fk_Rol" INT
+  "fk_Operation" INT
+}
+
+Table "Emails" {
+  "EmailID" INT [pk, increment]
+  "Email" VARCHAR(50) [unique, not null]
+}
+
+Table "PhoneNumbers" {
+  "PhoneNumberID" INT [pk, increment]
+  "PhoneNumber" VARCHAR(50) [not null]
+}
+
+Table "Users" {
+  "UserID" INT [pk, increment]
+  "fk_rol" INT
+  "fk_phoneNumber" INT
+  "fk_email" INT
+  "FirsName" VARCHAR(40) [not null]
+  "MiddleName" VARCHAR(40)
+  "LastNamePaternal" VARCHAR(40) [not null]
+  "LastNameMaternal" VARCHAR(40) [not null]
+  "Age" TINYINT
+  "Sex" VARCHAR(20) [not null]
+  "RTN" CHAR(14) [unique, not null]
+  "PasswordUser" VARCHAR(255) [not null]
+  "DateBirth" DATE [not null]
+  "DateCreated" DATE [not null]
+}
+
+Table "WineryAddress" {
+  "WineryAddressID" INT [pk, increment]
+  "Colony" VARCHAR(40) [not null]
+  "Number" VARCHAR(10) [not null]
+  "Street" VARCHAR(40) [not null]
+  "ZipCode" SMALLINT [not null]
+  "Municipality" VARCHAR(40) [not null]
+  "Department" VARCHAR(40) [not null]
+}
+
+Table "BranchMailings" {
+  "BranchMailingID" INT [pk, increment]
+  "Email" VARCHAR(50) [unique, not null]
+}
+
+Table "BranchOfficeAddress" {
+  "BranchOfficeAddressesID" INT [pk, increment]
+  "Colony" VARCHAR(40) [not null]
+  "Street" VARCHAR(40) [not null]
+  "LengthBOA" VARCHAR(40) [not null]
+  "LatitudeBOA" VARCHAR(40) [not null]
+  "ZipCode" SMALLINT [not null]
+  "Municipality" VARCHAR(40) [not null]
+  "Department" VARCHAR(40) [not null]
+}
+
+Table "CAIs" {
+  "CAIID" INT [pk, increment]
+  "CAINumber" VARCHAR(50)
+  "InitialRange" VARCHAR(25)
+  "FinalRange" VARCHAR(25)
+  "ExpirationDate" DATE
+  "AuthorizedRange" INT
+  "EnabledCAI" BIT
+}
+
+Table "BranchOffices" {
+  "BranchOfficeID" INT [pk, increment]
+  "fk_BranchMailing" INT
+  "fk_BranchOfficeAddress" INT
+  "fk_CAI" INT
+  "IssueNumber" INT [not null]
+  "TelephoneContact" INT [not null]
+  "BranchName" VARCHAR(50) [not null]
+}
+
+Table "Wineries" {
+  "WineryID" INT [pk, increment]
+  "fk_BranchOffice" INT
+  "fk_WineryAddress" INT
+  "NameWinery" VARCHAR(40) [not null]
+}
+
+Table "Vehicles" {
+  "VehiclesID" INT [pk, increment]
+  "fk_Winery" INT
+  "Brand" VARCHAR(30) [not null]
+  "Model" VARCHAR(30)
+  "YearV" DATE
+  "IsInsured" BIT [default: 0]
+}
+
+Table "Drivers" {
+  "DriverID" INT [pk, increment]
+  "fk_Employeed" INT
+  "fk_Vehicle" INT
+  "isAvailable" BIT [default: 0]
+}
+
+Table "Travels" {
+  "TravelID" INT [pk, increment]
+  "fk_userDriver" INT
+  "fk_userPassenger" INT
+  "InitialLatitude" DECIMAL(7,5) [not null]
+  "EndLatitude" DECIMAL(7,5) [not null]
+  "InitialDate" DATE
+  "EndDate" DATE
+  "InitialAddress" VARCHAR(50)
+  "SuggestedAddress" VARCHAR(50)
+  "EndAddress" VARCHAR(50)
+  "StateTravel" BIT
+}
+
+Table "UserOnHold" {
+  "userOnHoldID" INT [pk, increment]
+  "fk_travelID" INT
+}
+
+Table "PaymentInvoice" {
+  "PaymentMadeID" INT [pk, increment]
+  "PaymentAmount" DECIMAL(10,2) [not null]
+  "DatePayment" DATETIME
+}
+
+Table "PaymentMethods" {
+  "PaymentMethodID" INT [pk, increment]
+  "TypeMethod" VARCHAR(30) [not null]
+  "DescriptionMethod" TEXT
+}
+
+Table "TypeDocuments" {
+  "TypeDocumentID" INT [pk, increment]
+  "NameTypeDocuments" VARCHAR(50) [not null]
+  "Code" VARCHAR(30)
+}
+
+Table "InvoicesNumbers" {
+  "InvoiceNumberID" INT [pk, increment]
+  "fk_BranchNumber" INT
+  "fk_TypeDocument" INT
+  "PointEmission" VARCHAR(40) [not null]
+  "Correlative" VARCHAR(10)
+}
+
+Table "Printers" {
+  "PrinterID" INT [pk, increment]
+  "NamePrinter" VARCHAR(40) [not null]
+  "RTN" CHAR(14) [not null]
+  "HeadOfPrinter" VARCHAR(50) [not null]
+  "TelephoneContact" VARCHAR(12) [not null]
+  "CertificatePrinter" TEXT
+}
+
+Table "Invoices" {
+  "invoiceID" INT [pk, increment]
+  "fk_Printer" INT
+  "fk_BranchOffice" INT
+  "NameInvoices" VARCHAR(40) [not null]
+  "RTN" CHAR(14) [not null]
+}
+
+Table "InvoicesDetail" {
+  "InvoiceDetailID" INT [pk, increment]
+  "fk_Invoice" INT
+  "fk_Travel" INT
+  "fk_InvoiceNumber" INT
+  "DateInvoicesDetail" DATE
+  "Amount" DECIMAL(10,2) [not null]
+  "DescriptionInvoicesDetail" TEXT
+  "PriceExcempt" DECIMAL(10,2) [not null]
+  "Discount" DECIMAL(8,2) [not null]
+  "PriceGravated15" DECIMAL(8,2) [not null]
+  "PriceGravated18" DECIMAL(8,2) [not null]
+  "ISV15" DECIMAL(10,2) [not null]
+  "ISV18" DECIMAL(10,2) [not null]
+  "Total" DECIMAL(10,2) [not null]
+  "TotalLetters" DECIMAL(10,2) [not null]
+}
+
+Table "InvoicePaymentMethod" {
+  "Payment_InvoiceID" INT [pk, increment]
+  "fk_InvoiceDetail" INT
+  "fk_PaymentMethod" INT
+  "fk_PaymentMade" INT
+}
+
+Table "CompanyPositions" {
+  "CompanyPositionID" INT [pk, increment]
+  "Charge" VARCHAR(50) [not null]
+}
+
+Table "TypesContracts" {
+  "TypesContractID" INT [pk, increment]
+  "TypeContract" VARCHAR(50) [not null]
+}
+
+Table "Contracts" {
+  "ContractID" INT [pk, increment]
+  "fk_CompanyPosition" INT
+  "fk_TypesContract" INT
+  "ContractReference" TEXT
+  "StartDate" DATE
+  "EndDate" DATE
+  "WorkingDay" SMALLINT [not null]
+  "Salary" DECIMAL(10,2) [not null]
+}
+
+Table "Memorandums" {
+  "MemorandumID" INT [pk, increment]
+  "NameMemorandums" VARCHAR(40) [not null]
+  "DateCreation" DATE
+}
+
+Table "Absences" {
+  "AbsenceID" INT [pk, increment]
+  "TypeAbsence" VARCHAR(40) [not null]
+}
+
+Table "EmployeeAddresses" {
+  "EmployeeAddressID" INT [pk, increment]
+  "Colony" VARCHAR(40)
+  "Street" VARCHAR(40)
+  "HouseNumber" SMALLINT
+  "ZipCode" SMALLINT
+  "Municipality" VARCHAR(40)
+  "Department" VARCHAR(40)
+}
+
+Table "PoliceRecords" {
+  "PoliceRecordID" INT [pk, increment]
+  "Link" TEXT
+}
+
+Table "CriminalRecords" {
+  "CriminalRecordID" INT [pk, increment]
+  "Link" TEXT
+}
+
+Table "Department" {
+  "DepartmentID" INT [pk, increment]
+  "NameDepartment" VARCHAR(40) [not null]
+}
+
+Table "CivilStatus" {
+  "CivilStatusID" INT [pk, increment]
+  "CivilStatus" VARCHAR(30) [not null]
+}
+
+Table "OthersPayments" {
+  "OtherPaymentID" INT [pk, increment]
+  "NameOthersPayment" VARCHAR(30)
+}
+
+Table "TypeTickets" {
+  "TypeTicketID" INT [pk, increment]
+  "NameTypeTickets" VARCHAR(40) [not null]
+  "DescriptionTypeTickets" TEXT
+}
+
+Table "Employees" {
+  "EmployeedID" INT [pk, increment]
+  "fk_User" INT
+  "fk_BranchOffice" INT
+  "fk_CivilStatus" INT
+  "fk_Departmanet" INT
+  "fk_Contract" INT
+  "fk_CriminalRecord" INT
+  "fk_PoliceRecord" INT
+  "fk_EmployeeAddress" INT
+}
+
+Table "JobHistory" {
+  "JobHistoryID" INT [pk, increment]
+  "fk_Employee" INT
+  "StartDate" DATE [not null]
+  "EndDate" DATE
+}
+
+Table "OtherPaymentsEmployees" {
+  "OtherPayEmployeeID" INT [pk, increment]
+  "fk_Employee" INT
+  "fk_OtherPayment" INT
+  "AmountPayable" SMALLINT [not null]
+  "StatusPayment" VARCHAR(30) [not null]
+}
+
+Table "AbsentEmployees" {
+  "EmployeeAbsentID" INT [pk, increment]
+  "fk_Employeed" INT
+  "fk_Absence" INT
+  "StartAbsence" DATE
+  "EndAbsence" DATE
+}
+
+Table "MemorandumsEmployees" {
+  "MemorandumEmployeeID" INT [pk, increment]
+  "fk_Employee" INT
+  "fk_Memorandum" INT
+  "Link" TEXT
+  "StatusMemorandums" VARCHAR(30)
+}
+
+Table "Tickets" {
+  "TicketID" INT [pk, increment]
+  "fk_Employee" INT
+  "fk_TypeTicket" INT
+  "DateTickets" DATE
+}
+
+Table "ReprintInvoices" {
+  "ReprintInvoiceID" INT [pk, increment]
+  "fk_Employeed" INT
+  "fk_Invoice_Detail" INT
+  "Quantity" TINYINT
+  "DateCreated" DATETIME
+}
+
+Ref:"Modules"."ModuleID" < "Operations"."fk_Module"
+
+Ref:"Roles"."RolID" < "RolesOperations"."fk_Rol"
+
+Ref:"Operations"."OperationID" < "RolesOperations"."fk_Operation"
+
+Ref:"Roles"."RolID" < "Users"."fk_rol"
+
+Ref:"PhoneNumbers"."PhoneNumberID" < "Users"."fk_phoneNumber"
+
+Ref:"Emails"."EmailID" < "Users"."fk_email"
+
+Ref:"BranchMailings"."BranchMailingID" < "BranchOffices"."fk_BranchMailing"
+
+Ref:"BranchOfficeAddress"."BranchOfficeAddressesID" < "BranchOffices"."fk_BranchOfficeAddress"
+
+Ref:"CAIs"."CAIID" < "BranchOffices"."fk_CAI"
+
+Ref:"BranchOffices"."BranchOfficeID" < "Wineries"."fk_BranchOffice"
+
+Ref:"WineryAddress"."WineryAddressID" < "Wineries"."fk_WineryAddress"
+
+Ref:"WineryAddress"."WineryAddressID" < "Vehicles"."fk_Winery"
+
+Ref:"Vehicles"."VehiclesID" < "Drivers"."fk_Vehicle"
+
+Ref:"Users"."UserID" < "Drivers"."fk_Employeed"
+
+Ref:"Drivers"."DriverID" < "Travels"."fk_userDriver"
+
+Ref:"Users"."UserID" < "Travels"."fk_userPassenger"
+
+Ref:"Travels"."TravelID" < "UserOnHold"."fk_travelID"
+
+Ref:"BranchOffices"."BranchOfficeID" < "InvoicesNumbers"."fk_BranchNumber"
+
+Ref:"TypeDocuments"."TypeDocumentID" < "InvoicesNumbers"."fk_TypeDocument"
+
+Ref:"Printers"."PrinterID" < "Invoices"."fk_Printer"
+
+Ref:"BranchOffices"."BranchOfficeID" < "Invoices"."fk_BranchOffice"
+
+Ref:"Invoices"."invoiceID" < "InvoicesDetail"."fk_Invoice"
+
+Ref:"Travels"."TravelID" < "InvoicesDetail"."fk_Travel"
+
+Ref:"InvoicesNumbers"."InvoiceNumberID" < "InvoicesDetail"."fk_InvoiceNumber"
+
+Ref:"PaymentInvoice"."PaymentMadeID" < "InvoicePaymentMethod"."fk_PaymentMade"
+
+Ref:"PaymentMethods"."PaymentMethodID" < "InvoicePaymentMethod"."fk_PaymentMethod"
+
+Ref:"InvoicesDetail"."InvoiceDetailID" < "InvoicePaymentMethod"."fk_InvoiceDetail"
+
+Ref:"CompanyPositions"."CompanyPositionID" < "Contracts"."fk_CompanyPosition"
+
+Ref:"TypesContracts"."TypesContractID" < "Contracts"."fk_TypesContract"
+
+Ref:"Users"."UserID" < "Employees"."fk_User"
+
+Ref:"BranchOffices"."BranchOfficeID" < "Employees"."fk_BranchOffice"
+
+Ref:"CivilStatus"."CivilStatusID" < "Employees"."fk_CivilStatus"
+
+Ref:"Department"."DepartmentID" < "Employees"."fk_Departmanet"
+
+Ref:"Contracts"."ContractID" < "Employees"."fk_Contract"
+
+Ref:"CriminalRecords"."CriminalRecordID" < "Employees"."fk_CriminalRecord"
+
+Ref:"PoliceRecords"."PoliceRecordID" < "Employees"."fk_PoliceRecord"
+
+Ref:"EmployeeAddresses"."EmployeeAddressID" < "Employees"."fk_EmployeeAddress"
+
+Ref:"Employees"."EmployeedID" < "JobHistory"."fk_Employee"
+
+Ref:"Employees"."EmployeedID" < "OtherPaymentsEmployees"."fk_Employee"
+
+Ref:"OthersPayments"."OtherPaymentID" < "OtherPaymentsEmployees"."fk_OtherPayment"
+
+Ref:"Employees"."EmployeedID" < "AbsentEmployees"."fk_Employeed"
+
+Ref:"Absences"."AbsenceID" < "AbsentEmployees"."fk_Absence"
+
+Ref:"Employees"."EmployeedID" < "MemorandumsEmployees"."fk_Employee"
+
+Ref:"Memorandums"."MemorandumID" < "MemorandumsEmployees"."fk_Memorandum"
+
+Ref:"Employees"."EmployeedID" < "Tickets"."fk_Employee"
+
+Ref:"TypeTickets"."TypeTicketID" < "Tickets"."fk_TypeTicket"
+
+Ref:"Employees"."EmployeedID" < "ReprintInvoices"."fk_Employeed"
+
+Ref:"InvoicesDetail"."InvoiceDetailID" < "ReprintInvoices"."fk_Invoice_Detail"

@@ -1,15 +1,20 @@
 {
-    "name": "ayumi-api",
-    "description": "Project for database class I, transportation service",
-    "repository": "https://github.com/galexbh/ayumi-api",
-    "keywords": [
-    "unah",
-    "mssql",
-    "typescript"
-    ],
-    "env": {
-        "DB_CONNECTION": {
-            "description": "Azure connection string"
-        }
+  "name": "ayumi-api",
+  "description": "Project for database class I, transportation service",
+  "repository": "https://github.com/galexbh/ayumi-api",
+  "keywords": ["unah", "mssql", "typescript"],
+  "env": {
+    "DB_CONNECTION": {
+      "description": "Azure connection string"
+    },
+    "CLOUD_NAME": {
+      "description": "Cloudinary connection string Cloud Name"
+    },
+    "CLOUD_API_KEY": {
+      "description": "Cloudinary API Key connection string"
+    },
+    "CLOUD_API_SECRET": {
+      "description": "Cloudinary Connection String API Secret"
     }
+  }
 }

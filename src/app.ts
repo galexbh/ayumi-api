@@ -1,6 +1,8 @@
 import express, { Application } from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import morgan from "morgan";
+import fileUpload from "express-fileupload";
 
 import { config } from "dotenv";
 import { resolve } from "path";
@@ -10,10 +12,15 @@ import sql from "mssql";
 import dbConfig from "./database/config";
 
 import { MainController } from "./controllers/main.controller";
+import { UserController } from "./controllers/user.controller";
+import { ModuleController } from "./controllers/module.controller";
+
 
 class App {
   public app: Application;
   public mainController: MainController;
+  public userController: UserController;
+  public moduleController: ModuleController;
 
   constructor() {
     this.app = express();
@@ -21,15 +28,22 @@ class App {
     this.setMSSQLConfig();
 
     this.mainController = new MainController(this.app);
+    this.userController = new UserController(this.app);
+    this.moduleController = new ModuleController(this.app);
   }
 
   private setConfig() {
     this.app.use(bodyParser.json({ limit: "50mb" }));
     this.app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+    this.app.use(morgan('combined'));
     this.app.use(cors());
+    this.app.use(fileUpload({
+      useTempFiles : true,
+      tempFileDir : './uploads'
+  }));
   }
   private setMSSQLConfig() {
-    sql.connect(dbConfig, (err: any) => {
+    sql.connect(dbConfig || process.env.DB_CONNECTION, (err: any) => {
       if (err) {
         console.error(err.message);
       }
