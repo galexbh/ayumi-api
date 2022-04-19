@@ -48,7 +48,7 @@ class App {
   }));
   }
   private setMSSQLConfig() {
-    sql.connect(dbConfig || process.env.DB_CONNECTION, (err: any) => {
+    sql.connect(process.env.DB_CONNECTION || dbConfig, (err: any) => {
       if (err) {
         console.error(err.message);
       }

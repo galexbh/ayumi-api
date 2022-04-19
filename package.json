@@ -2,11 +2,12 @@
   "name": "ayumi-api",
   "version": "1.0.0",
   "description": "Project for database class I, transportation service",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
-    "tsc": "tsc",
-    "start": "npm run tsc && node ."
+    "postinstall": "tsc && mv -i -v public dist/ && rm -v -rf src",
+    "deploy": "git add . && git commit -m Heroku && git push heroku master",
+    "start": "node ."
   },
   "repository": {
     "type": "git",
