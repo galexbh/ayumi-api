@@ -1,5 +1,5 @@
-CREATE DATABASE ayumi;
-/*USE ayumi;*/
+CREATE DATABASE ayumidb;
+/*USE ayumidb;*/
 
 CREATE TABLE Modules(
 	ModuleID INT IDENTITY(1,1) PRIMARY KEY,
@@ -35,7 +35,7 @@ CREATE TABLE Emails(
 
 CREATE TABLE PhoneNumbers(
   PhoneNumberID INT IDENTITY(1,1) PRIMARY KEY,
-  PhoneNumber VARCHAR(50) NOT NULL
+  PhoneNumber VARCHAR(50) UNIQUE NOT NULL
 );
 
 CREATE TABLE Users(
@@ -65,7 +65,7 @@ CREATE TABLE Users(
 CREATE TABLE WineryAddress(
 	WineryAddressID INT IDENTITY(1,1) PRIMARY KEY,
 	Colony VARCHAR(40) NOT NULL,
-	Number VARCHAR(10) NOT NULL,
+	HouseNumber VARCHAR(10) NOT NULL,
 	Street VARCHAR(40) NOT NULL,
 	ZipCode SMALLINT NOT NULL,
 	Municipality VARCHAR(40) NOT NULL,
@@ -294,8 +294,6 @@ CREATE TABLE Absences(
 	AbsenceID INT IDENTITY(1,1) PRIMARY KEY,
 	TypeAbsence VARCHAR(40) NOT NULL
 );
-
-
 
 CREATE TABLE EmployeeAddresses(
 	EmployeeAddressID INT IDENTITY(1,1) PRIMARY KEY,

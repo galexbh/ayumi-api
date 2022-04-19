@@ -52,31 +52,54 @@ export class User {
       const queryResultEmail = await request
         .input("Email", sql.VarChar, Email)
         .query(emailQueries.addNewEmail);
-
-      const queryResultPhoneNumber = await request
-        .input("PhoneNumber", sql.VarChar, PhoneNumber)
-        .query(phoneNumberQueries.addNewPhoneNumber);
-      
-      const queryResultUser = await request
-        .input("fk_rol", sql.Int, 1)
-        .input(
-          "fk_phoneNumber",
-          sql.Int,
-          queryResultPhoneNumber.recordset[0]["id"]
-        )
-        .input("fk_email", sql.Int, queryResultEmail.recordset[0]["id"])
-        .input("FirsName", sql.VarChar, FirsName)
-        .input("MiddleName", sql.VarChar, MiddleName)
-        .input("LastNamePaternal", sql.VarChar, LastNamePaternal)
-        .input("LastNameMaternal", sql.VarChar, LastNameMaternal)
-        .input("Age", sql.TinyInt, Age)
-        .input("Sex", sql.VarChar, Sex)
-        .input("RTN", sql.Char, RTN)
-        .input("PasswordUser", sql.VarChar, SecretWordEncrypted)
-        .input("DateBirth", sql.Date, new Date(DateBirth).toISOString().slice(0, 10))
-        .input("DateCreated", sql.Date, new Date().toISOString().slice(0, 10))
-        .query(userQueries.addNewUser);
-      return res.status(200).json(queryResultUser);
+      try {
+        const queryResultPhoneNumber = await request
+          .input("PhoneNumber", sql.VarChar, PhoneNumber)
+          .query(phoneNumberQueries.addNewPhoneNumber);
+        try {
+          const queryResultUser = await request
+            .input("fk_rol", sql.Int, 1)
+            .input(
+              "fk_phoneNumber",
+              sql.Int,
+              queryResultPhoneNumber.recordset[0]["id"]
+            )
+            .input("fk_email", sql.Int, queryResultEmail.recordset[0]["id"])
+            .input("FirsName", sql.VarChar, FirsName)
+            .input("MiddleName", sql.VarChar, MiddleName)
+            .input("LastNamePaternal", sql.VarChar, LastNamePaternal)
+            .input("LastNameMaternal", sql.VarChar, LastNameMaternal)
+            .input("Age", sql.TinyInt, Age)
+            .input("Sex", sql.VarChar, Sex)
+            .input("RTN", sql.Char, RTN)
+            .input("PasswordUser", sql.VarChar, SecretWordEncrypted)
+            .input(
+              "DateBirth",
+              sql.Date,
+              new Date(DateBirth).toISOString().slice(0, 10)
+            )
+            .input(
+              "DateCreated",
+              sql.Date,
+              new Date().toISOString().slice(0, 10)
+            )
+            .query(userQueries.addNewUser);
+          return res.status(200).json(queryResultUser);
+        } catch (err) {
+          await request
+            .input("Id", queryResultEmail.recordset[0]["id"])
+            .query(emailQueries.deleteEmail);
+          await request
+            .input("Id", queryResultPhoneNumber.recordset[0]["id"])
+            .query(phoneNumberQueries.deletePhoneNumber);
+          return res.status(400).json({ msg: err });
+        }
+      } catch (err) {
+        await request
+          .input("Id", queryResultEmail.recordset[0]["id"])
+          .query(emailQueries.deleteEmail);
+        return res.status(400).json({ msg: err });
+      }
     } catch (err) {
       return res.status(400).json({ msg: err });
     }
@@ -96,35 +119,88 @@ export class User {
     if (!result.success) {
       return res.status(400).json(result.error);
     }
-    try{
-    const resultEmailUser = await request
-    .input("Email", sql.VarChar, Email)
-    .query(userQueries.getUserByEmail);
+    try {
+      const resultEmailUser = await request
+        .input("Email", sql.VarChar, Email)
+        .query(userQueries.getUserByEmail);
 
-    const wordSecretValid = await bcrypt.compare(
-      Password,
-      resultEmailUser.recordset[0]["PasswordUser"]
-    );
+      const wordSecretValid = await bcrypt.compare(
+        Password,
+        resultEmailUser.recordset[0]["PasswordUser"]
+      );
 
-    if (!wordSecretValid) {
-      return res.status(400).json({ msg: "password invalid" });
-    }
+      if (!wordSecretValid) {
+        return res.status(400).json({ msg: "password invalid" });
+      }
 
-    return res.status(200).json(resultEmailUser.recordset);
-
-    } catch(err){
+      return res.status(200).json(resultEmailUser.recordset);
+    } catch (err) {
       return res.status(400).json({ msg: err });
     }
-    
   }
 
-  //public async getUserById(req: Request, res: Response) {}
+  public async getUserById(req: Request, res: Response) {
+    const request = new sql.Request();
+    const { Id } = req.params;
 
-  //public async getAllUser(req: Request, res: Response) {}
+    try {
+      const queryResult = await request
+        .input("Id", Id)
+        .query(userQueries.getUserById);
+      return res.status(200).json(queryResult.recordset);
+    } catch (err) {
+      return res.status(400).json({ msg: err });
+    }
+  }
 
-  //public async deleteUser(req: Request, res: Response) {}
+  public async getAllUser(_req: Request, res: Response) {
+    const request = new sql.Request();
+    const queryResult = await request.query(userQueries.getAllUser);
+    return res.status(200).json(queryResult);
+  }
 
-  //public async updateUser(req: Request, res: Response) {}
+  public async deleteUser(req: Request, res: Response) {
+    const request = new sql.Request();
+    const { Id } = req.params;
+
+    try {
+      const queryResult = await request
+        .input("Id", Id)
+        .query(userQueries.deleteUser);
+      return res.status(200).json(queryResult.recordset);
+    } catch (err) {
+      return res.status(400).json({ msg: err });
+    }
+  }
+
+/*
+  public async updateUser(req: Request, res: Response) {
+    const request = new sql.Request();
+    const { Id } = req.params;
+    const { Email, Password } = req.body;
+
+    const rolInput: rolType = {
+      nameRol: NameRoles,
+    };
+
+    const result = rolSchema.safeParse(rolInput);
+
+    if (!result.success) {
+      return res.status(400).json(result.error);
+    }
+
+    try {
+      const queryResult = await request
+        .input("Id", Id)
+        .input("NameRoles", NameRoles)
+        .query(rolQueries.updateRol);
+      return res.status(200).json(queryResult.recordset);
+    } catch (err) {
+      return res.status(400).json({ msg: err });
+    }
+  }
+*/
+  //public async updateUserRol(req: Request, res: Response) {}
 }
 
 class userUtilities {

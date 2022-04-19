@@ -14,13 +14,14 @@ import dbConfig from "./database/config";
 import { MainController } from "./controllers/main.controller";
 import { UserController } from "./controllers/user.controller";
 import { ModuleController } from "./controllers/module.controller";
-
+import { RolController } from "./controllers/rol.controller";
 
 class App {
   public app: Application;
   public mainController: MainController;
   public userController: UserController;
   public moduleController: ModuleController;
+  public rolController: RolController;
 
   constructor() {
     this.app = express();
@@ -30,6 +31,7 @@ class App {
     this.mainController = new MainController(this.app);
     this.userController = new UserController(this.app);
     this.moduleController = new ModuleController(this.app);
+    this.rolController = new RolController(this.app);
   }
 
   private setConfig() {

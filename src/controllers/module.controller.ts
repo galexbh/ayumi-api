@@ -10,6 +10,12 @@ export class ModuleController {
   }
 
   public routes() {
-    this.app.post("/module", this.moduleservices.createModule);
+    this.app.route("/module/v1")
+    .get(this.moduleservices.getAllModule)
+    .post(this.moduleservices.createModule);
+
+    this.app.route("/module/v1/:Id")
+    .put(this.moduleservices.updateModule)
+    .delete(this.moduleservices.deleteModule);
   }
 }

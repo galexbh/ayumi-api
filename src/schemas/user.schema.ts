@@ -14,7 +14,9 @@ export const userSchema = z.object({
     .string()
     .max(40, { message: "Must be 40 or fewer characters long" }),
   sex: z.string().max(20, { message: "Must be 20 or fewer characters long" }),
-  rtn: z.string().max(14, { message: "Must be 14 or fewer characters long" }),
+  rtn: z
+    .string()
+    .max(14, { message: "Must be 14 or fewer characters long" }),
   passwordUser: z
     .string()
     .min(8, { message: "Must be 8 or more characters long" }),

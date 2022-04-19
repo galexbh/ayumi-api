@@ -27,7 +27,7 @@ Table "Emails" {
 
 Table "PhoneNumbers" {
   "PhoneNumberID" INT [pk, increment]
-  "PhoneNumber" VARCHAR(50) [not null]
+  "PhoneNumber" VARCHAR(50) [unique, not null]
 }
 
 Table "Users" {
@@ -50,7 +50,7 @@ Table "Users" {
 Table "WineryAddress" {
   "WineryAddressID" INT [pk, increment]
   "Colony" VARCHAR(40) [not null]
-  "Number" VARCHAR(10) [not null]
+  "HouseNumber" VARCHAR(10) [not null]
   "Street" VARCHAR(40) [not null]
   "ZipCode" SMALLINT [not null]
   "Municipality" VARCHAR(40) [not null]

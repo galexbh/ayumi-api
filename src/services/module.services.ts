@@ -28,20 +28,34 @@ export class Module {
     const queryResult = sql.query(moduleQueries.getAllModule);
     return res.status(200).json(queryResult);
   }
-/*
+
   public async updateModule(req: Request, res: Response) {
     const request = new sql.Request();
+    const { NameModules } = req.body;
     const { Id } = req.params;
 
-    const queryResult = await sql.query(moduleQueries.updateModule);
-    return res.status(200).json(queryResult);
+    try {
+      const queryResult = await request
+        .input("Id", Id)
+        .input("NameModules", NameModules)
+        .query(moduleQueries.updateModule);
+      return res.status(200).json(queryResult.recordset);
+    } catch (err) {
+      return res.status(400).json({ msg: err });
+    }
   }
-*/
+
   public async deleteModule(req: Request, res: Response) {
     const request = new sql.Request();
     const { Id } = req.params;
-    
-    const queryResult = await request.input("Id", Id).query(moduleQueries.deleteModule);
-    return res.status(200).json(queryResult.recordset);
+
+    try {
+      const queryResult = await request
+        .input("Id", Id)
+        .query(moduleQueries.deleteModule);
+      return res.status(200).json(queryResult.recordset);
+    } catch (err) {
+      return res.status(400).json({ msg: err });
+    }
   }
 }
