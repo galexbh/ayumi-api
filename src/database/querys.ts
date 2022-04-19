@@ -34,6 +34,7 @@ export const userQueries = {
   addNewUser: `INSERT INTO Users (fk_rol, fk_phoneNumber, fk_email, FirsName, MiddleName, LastNamePaternal, LastNameMaternal, Age, Sex, RTN, PasswordUser, DateBirth, DateCreated) VALUES(@fk_rol, @fk_phoneNumber, @fk_email, @FirsName, @MiddleName, @LastNamePaternal, @LastNameMaternal, @Age, @Sex, @RTN, @PasswordUser, @DateBirth, @DateCreated);`,
   deleteUser: `DELETE FROM Users WHERE UserID=@Id;`,
   updateUser: `UPDATE Users SET RTN=@RTN, PasswordUser=@Password WHERE UserID=@Id;`,
+  updateUserRTN: `UPDATE Users SET RTN=@RTN WHERE UserID=@Id;`,
   updateUserRol: `UPDATE Users SET fk_rol=@fk_rol WHERE UserID=@UserID;`,
   getUserByEmail: `SELECT Users.UserID, Users.fk_rol, pn.PhoneNumber, e.Email, Users.FirsName, Users.MiddleName, Users.LastNamePaternal, Users.LastNameMaternal, Users.Age, Users.Sex, Users.RTN, Users.PasswordUser, Users.DateBirth FROM Users
   INNER JOIN PhoneNumbers AS pn ON Users.fk_phoneNumber = pn.PhoneNumberID

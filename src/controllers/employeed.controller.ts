@@ -1,4 +1,4 @@
-import { Application } from "express";
+/*import { Application } from "express";
 import { Employeed } from "../services/employeed.services";
 
 export class EmployeedController {
@@ -12,4 +12,4 @@ export class EmployeedController {
   public routes() {
     
   }
-}
+}*/

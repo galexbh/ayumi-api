@@ -39,11 +39,13 @@ export const updateUserSchema = z.object({
       .email()
       .max(50, { message: "Must be 50 or fewer characters long" })
       .nonempty(),
-    Password: z
+    NewPassword: z
       .string()
       .min(8, { message: "Must be 8 or more characters long" })
       .nonempty(),
-    RTN: z.string().max(14, { message: "Must be 14 or fewer characters long" }),
+    RTN: z
+      .string()
+      .length(14, { message: "Must be exactly 14 characters long" }),
     PhoneNumber: z
       .string()
       .max(50, { message: "Must be 50 or fewer characters long" })

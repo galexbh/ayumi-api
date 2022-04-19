@@ -125,30 +125,43 @@ export class User {
     const {
       OldEmail,
       NewEmail,
-      Password,
+      OldPassword,
+      NewPassword,
       RTN,
       OldPhoneNumber,
       NewPhoneNumber,
     } = req.body;
 
     try {
-      await request
-        .input("OldEmail", OldEmail)
-        .input("NewEmail", NewEmail)
-        .query(emailQueries.updateEmail);
+      if (!(OldEmail === NewEmail)) {
+        await request
+          .input("OldEmail", OldEmail)
+          .input("NewEmail", NewEmail)
+          .query(emailQueries.updateEmail);
+      }
 
-      await request
-        .input("OldPhoneNumber", OldPhoneNumber)
-        .input("NewPhoneNumber", NewPhoneNumber)
-        .query(phoneNumberQueries.updatePhoneNumber);
+      if (!(OldPhoneNumber === NewPhoneNumber)) {
+        await request
+          .input("OldPhoneNumber", OldPhoneNumber)
+          .input("NewPhoneNumber", NewPhoneNumber)
+          .query(phoneNumberQueries.updatePhoneNumber);
+      }
 
-      const SecretWordEncrypted: string = await bcrypt.hash(Password, 5);
+      if (!(await bcrypt.compare(NewPassword, OldPassword))) {
+        const SecretWordEncrypted: string = await bcrypt.hash(NewPassword, 5);
+
+        await request
+          .input("Id", Id)
+          .input("Password", SecretWordEncrypted)
+          .input("RTN", RTN)
+          .query(userQueries.updateUser);
+      }
 
       await request
         .input("Id", Id)
-        .input("Password", SecretWordEncrypted)
         .input("RTN", RTN)
-        .query(userQueries.updateUser);
+        .query(userQueries.updateUserRTN);
+
       return res.status(200).json({ message: "successful request" });
     } catch (err) {
       return res.status(400).json({ message: err });
