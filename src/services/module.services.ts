@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { moduleSchema, moduleType } from "../schemas/module.schema";
 import { moduleQueries } from "../database/querys";
 import sql from "mssql";
 
@@ -8,24 +7,15 @@ export class Module {
     const request = new sql.Request();
     const { NameModules } = req.body;
 
-    const moduleInput: moduleType = {
-      nameModule: NameModules,
-    };
-
-    const result = moduleSchema.safeParse(moduleInput);
-
-    if (!result.success) {
-      return res.status(400).json(result.error);
-    }
-
     const queryResult = await request
       .input("NameModules", sql.VarChar, NameModules)
       .query(moduleQueries.addNewModule);
     return res.status(200).json(queryResult);
   }
 
-  public getAllModule(_req: Request, res: Response) {
-    const queryResult = sql.query(moduleQueries.getAllModule);
+  public async getAllModule(_req: Request, res: Response) {
+    const request = new sql.Request();
+    const queryResult = await request.query(moduleQueries.getAllModule);
     return res.status(200).json(queryResult);
   }
 
@@ -41,7 +31,7 @@ export class Module {
         .query(moduleQueries.updateModule);
       return res.status(200).json(queryResult.recordset);
     } catch (err) {
-      return res.status(400).json({ msg: err });
+      return res.status(400).json({ message: err });
     }
   }
 
@@ -55,7 +45,7 @@ export class Module {
         .query(moduleQueries.deleteModule);
       return res.status(200).json(queryResult.recordset);
     } catch (err) {
-      return res.status(400).json({ msg: err });
+      return res.status(400).json({ message: err });
     }
   }
 }

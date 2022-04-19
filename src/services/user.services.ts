@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import sql from "mssql";
 
-import { userSchema, userType } from "../schemas/user.schema";
-import { loginSchema, loginType } from "../schemas/login.schema";
 import {
   phoneNumberQueries,
   emailQueries,
@@ -25,24 +23,6 @@ export class User {
       DateBirth,
       Password,
     } = req.body;
-
-    const userInput: userType = {
-      firsName: FirsName,
-      middleName: MiddleName,
-      lastNamePaternal: LastNamePaternal,
-      lastNameMaternal: LastNameMaternal,
-      sex: Sex,
-      rtn: RTN,
-      email: Email,
-      passwordUser: Password,
-      phoneNumber: PhoneNumber,
-    };
-
-    const resultUser = userSchema.safeParse(userInput);
-
-    if (!resultUser.success) {
-      return res.status(400).json(resultUser.error);
-    }
 
     const Age: number = userUtilities.calculateAge(DateBirth);
 
@@ -92,50 +72,16 @@ export class User {
           await request
             .input("Id", queryResultPhoneNumber.recordset[0]["id"])
             .query(phoneNumberQueries.deletePhoneNumber);
-          return res.status(400).json({ msg: err });
+          return res.status(400).json({ message: err });
         }
       } catch (err) {
         await request
           .input("Id", queryResultEmail.recordset[0]["id"])
           .query(emailQueries.deleteEmail);
-        return res.status(400).json({ msg: err });
+        return res.status(400).json({ message: err });
       }
     } catch (err) {
-      return res.status(400).json({ msg: err });
-    }
-  }
-
-  public async loginUser(req: Request, res: Response) {
-    const request = new sql.Request();
-    const { Email, Password } = req.body;
-
-    const loginInput: loginType = {
-      email: Email,
-      passwordUser: Password,
-    };
-
-    const result = loginSchema.safeParse(loginInput);
-
-    if (!result.success) {
-      return res.status(400).json(result.error);
-    }
-    try {
-      const resultEmailUser = await request
-        .input("Email", sql.VarChar, Email)
-        .query(userQueries.getUserByEmail);
-
-      const wordSecretValid = await bcrypt.compare(
-        Password,
-        resultEmailUser.recordset[0]["PasswordUser"]
-      );
-
-      if (!wordSecretValid) {
-        return res.status(400).json({ msg: "password invalid" });
-      }
-
-      return res.status(200).json(resultEmailUser.recordset);
-    } catch (err) {
-      return res.status(400).json({ msg: err });
+      return res.status(400).json({ message: err });
     }
   }
 
@@ -149,7 +95,7 @@ export class User {
         .query(userQueries.getUserById);
       return res.status(200).json(queryResult.recordset);
     } catch (err) {
-      return res.status(400).json({ msg: err });
+      return res.status(400).json({ message: err });
     }
   }
 
@@ -169,37 +115,46 @@ export class User {
         .query(userQueries.deleteUser);
       return res.status(200).json(queryResult.recordset);
     } catch (err) {
-      return res.status(400).json({ msg: err });
+      return res.status(400).json({ message: err });
     }
   }
 
-/*
   public async updateUser(req: Request, res: Response) {
     const request = new sql.Request();
     const { Id } = req.params;
-    const { Email, Password } = req.body;
-
-    const rolInput: rolType = {
-      nameRol: NameRoles,
-    };
-
-    const result = rolSchema.safeParse(rolInput);
-
-    if (!result.success) {
-      return res.status(400).json(result.error);
-    }
+    const {
+      OldEmail,
+      NewEmail,
+      Password,
+      RTN,
+      OldPhoneNumber,
+      NewPhoneNumber,
+    } = req.body;
 
     try {
-      const queryResult = await request
+      await request
+        .input("OldEmail", OldEmail)
+        .input("NewEmail", NewEmail)
+        .query(emailQueries.updateEmail);
+
+      await request
+        .input("OldPhoneNumber", OldPhoneNumber)
+        .input("NewPhoneNumber", NewPhoneNumber)
+        .query(phoneNumberQueries.updatePhoneNumber);
+
+      const SecretWordEncrypted: string = await bcrypt.hash(Password, 5);
+
+      await request
         .input("Id", Id)
-        .input("NameRoles", NameRoles)
-        .query(rolQueries.updateRol);
-      return res.status(200).json(queryResult.recordset);
+        .input("Password", SecretWordEncrypted)
+        .input("RTN", RTN)
+        .query(userQueries.updateUser);
+      return res.status(200).json({ message: "successful request" });
     } catch (err) {
-      return res.status(400).json({ msg: err });
+      return res.status(400).json({ message: err });
     }
   }
-*/
+
   //public async updateUserRol(req: Request, res: Response) {}
 }
 
@@ -213,7 +168,6 @@ class userUtilities {
     if (month < 0 || (month === 0 && dateNow.getDate() < birthday.getDate())) {
       age--;
     }
-
     return age;
   }
 }

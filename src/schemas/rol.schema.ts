@@ -1,9 +1,20 @@
 import { z } from "zod";
 
-export const rolSchema = z.object({
-  nameRol: z
-    .string()
-    .max(50, { message: "Must be 50 or fewer characters long" }),
+export const createRolSchema = z.object({
+  body: z.object({
+    NameRol: z
+      .string()
+      .max(50, { message: "Must be 50 or fewer characters long" }),
+  }),
 });
 
-export type rolType = z.infer<typeof rolSchema>;
+export const updateRolSchema = z.object({
+  body: z.object({
+    NameRol: z
+      .string()
+      .max(50, { message: "Must be 50 or fewer characters long" }),
+  }),
+  params: z.object({
+    Id: z.string().nonempty(),
+  }),
+});
