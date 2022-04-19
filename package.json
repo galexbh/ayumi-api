@@ -6,7 +6,7 @@
   "engines": { "node": "16.13.1" },
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
-    "postinstall": "tsc",
+    "postinstall": "tsc && mv -i -v public dist/ && rm -v -rf src",
     "deploy": "git add . && git commit -m Heroku && git push heroku main",
     "start": "node ."
   },
