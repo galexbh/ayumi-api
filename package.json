@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Project for database class I, transportation service",
   "main": "dist/index.js",
+  "engines": { "node": "16.13.1" },
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
-    "postinstall": "tsc && mv -i -v public dist/ && rm -v -rf src",
+    "postinstall": "tsc",
     "deploy": "git add . && git commit -m Heroku && git push heroku main",
     "start": "node ."
   },
