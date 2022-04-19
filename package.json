@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
     "postinstall": "tsc && mv -i -v public dist/ && rm -v -rf src",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master",
+    "deploy": "git add . && git commit -m Heroku && git push heroku main",
     "start": "node ."
   },
   "repository": {
